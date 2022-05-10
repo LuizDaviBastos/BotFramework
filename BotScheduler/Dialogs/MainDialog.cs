@@ -25,22 +25,21 @@ namespace BotScheduler.Dialogs
             var waterfallSteps = new WaterfallStep[]
             {
                 //dialogs...
-                QuestionSchedulesAsync,
-                IntentAsync,
-                Finish,
-                Finish2
+                QuestionName,
+                QuestionAge,
+                QuestionRunAgain,
+                RunAgain
 
             };
 
             AddDialog(new WaterfallDialog(DialogIds.MainWaterfallDialog, waterfallSteps));
-            //AddDialog(new CreateAppointmentDialog(DialogIds.CreateAppointmentDialog));
             AddDialog(new TextPrompt(DialogIds.TextPrompt));
 
             InitialDialogId = DialogIds.MainWaterfallDialog;
         }
 
 
-        public async Task<DialogTurnResult> QuestionSchedulesAsync(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> QuestionName(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
             return await waterfallStep.PromptAsync(DialogIds.TextPrompt, new PromptOptions()
             {
@@ -48,7 +47,7 @@ namespace BotScheduler.Dialogs
             }, cancellationToken);
         }
 
-        public async Task<DialogTurnResult> IntentAsync(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> QuestionAge(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
             waterfallStep.Values["Name"] = waterfallStep.Result;
             return await waterfallStep.PromptAsync(DialogIds.TextPrompt, new PromptOptions()
@@ -58,7 +57,7 @@ namespace BotScheduler.Dialogs
         }
 
 
-        public async Task<DialogTurnResult> Finish(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> QuestionRunAgain(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
             waterfallStep.Values["Age"] = waterfallStep.Result;
             var reponse = waterfallStep.Context.Activity.Text;
@@ -70,7 +69,7 @@ namespace BotScheduler.Dialogs
         }
 
 
-        public async Task<DialogTurnResult> Finish2(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> RunAgain(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
             var result = waterfallStep.Result;
             var reponse = waterfallStep.Context.Activity.Text;
