@@ -59,8 +59,7 @@ namespace BotScheduler.Dialogs.GoToDialog
         {
             var listActions = new List<CardAction>()
             {
-                new CardAction(){ Title = "Create a new appointment", Type = ActionTypes.PostBack,  Value = Intents.CreateAppointment},
-                new CardAction(){ Title = "Find your appointments", Type = ActionTypes.PostBack, Value = Intents.GetAppointment}
+                new CardAction(){ Title = "Create a Announcement", Type = ActionTypes.PostBack,  Value = Intents.CreateAnnouncement},
             };
 
             var card = new HeroCard()

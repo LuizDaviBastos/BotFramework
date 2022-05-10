@@ -1,11 +1,8 @@
-﻿using BotScheduler.API;
-using BotScheduler.Dialogs.AppointmentDialog.CreateAppointment;
-using BotScheduler.Dialogs.CreateAppointment;
+﻿using BotScheduler.Dialogs.CreateAppointment;
 using BotScheduler.Dialogs.GoToDialog;
 using BotScheduler.Library;
 using BotScheduler.Library.Keys;
 using BotScheduler.Models;
-using BotScheduler.Recognizer;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Collections.Generic;
@@ -16,31 +13,24 @@ namespace BotScheduler.Dialogs
 {
     public class CreateAppointmentDialog : ComponentDialog
     {
-        private readonly LuisRecognizerQuery _luisRecognizerQuery;
-        private readonly TelehealthApiService _telehealthApiService;
         private readonly RepositoryService repositoryService;
 
-        public CreateAppointmentDialog(string dialogId, LuisRecognizerQuery luisRecognizerQuery, TelehealthApiService telehealthApiService, RepositoryService repositoryService) : base(dialogId)
+        public CreateAppointmentDialog(string dialogId) : base(dialogId)
         {
-            this._luisRecognizerQuery = luisRecognizerQuery;
-            this._telehealthApiService = telehealthApiService;
-            this.repositoryService = repositoryService;
             var watterfallDialogs = new WaterfallStep[]
             {
                 QuestionIntentionForVerificationOfBenefitsAsync,
-                CollectInsuranceInfo,
+              /*  CollectInsuranceInfo,
                 GetDateAppointmentAsync,
                 GetUserNameAsync,
                 GetEmailAsync,
                 GetPhoneNumberAsync,
-                EndDialog
+                EndDialog*/
             };
 
             AddDialog(new WaterfallDialog(DialogIds.WaterfallDialog, watterfallDialogs));
-            AddDialog(new EnterUserNameDialog(DialogIds.EnterUserNameDialog, this._luisRecognizerQuery, repositoryService));
-            AddDialog(new EnterDateAppointmentDialog(DialogIds.EnterDateAppointmentDialog, this._luisRecognizerQuery, telehealthApiService, repositoryService));
-            AddDialog(new InsuranceDialog(DialogIds.InsuranceDialog, this._luisRecognizerQuery, telehealthApiService, repositoryService));
-            AddDialog(new TextPrompt($"{DialogIds.TextPrompt}PhoneNumber", PhoneNumberValidatorAsync));
+            //AddDialog(new EnterUserNameDialog(DialogIds.EnterUserNameDialog, this._luisRecognizerQuery, repositoryService));
+           // AddDialog(new TextPrompt($"{DialogIds.TextPrompt}PhoneNumber", PhoneNumberValidatorAsync));
             AddDialog(new TextPrompt(DialogIds.TextPrompt));
             AddDialog(new ChoicePrompt(DialogIds.ChoicePrompt));
             InitialDialogId = DialogIds.WaterfallDialog;
@@ -54,7 +44,7 @@ namespace BotScheduler.Dialogs
             }, cancellationToken);
         }
 
-        public async Task<DialogTurnResult> CollectInsuranceInfo(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+       /* public async Task<DialogTurnResult> CollectInsuranceInfo(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
             var intents = await this._luisRecognizerQuery.RecognizeAsync(waterfallStep.Context, cancellationToken);
 
@@ -129,6 +119,6 @@ namespace BotScheduler.Dialogs
             {
                 return await DialogGo.ToMainDialog(waterfallStep, cancellationToken, "There was a problem creating the appointment");
             }
-        }
+        }*/
     }
 }

@@ -3,9 +3,7 @@
 //
 // Generated with Bot Builder V4 SDK Template for Visual Studio EmptyBot v4.11.1
 
-using BotScheduler.API;
 using BotScheduler.Dialogs;
-using BotScheduler.Recognizer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
@@ -29,8 +27,6 @@ namespace BotScheduler
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ChatContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddControllers().AddNewtonsoftJson();
@@ -38,7 +34,6 @@ namespace BotScheduler
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
-            services.AddScoped<RepositoryService>();
             services.AddSingleton<UserState>();
             services.AddSingleton<ConversationState>();
             services.AddSingleton<IStorage, MemoryStorage>();
@@ -50,10 +45,6 @@ namespace BotScheduler
 
             //MyDialogs
             services.AddScoped<MainDialog>();
-            services.AddScoped<LuisRecognizerQuery>();
-
-            //ApiService
-            services.AddScoped<TelehealthApiService>();
 
             services.AddSwaggerGen();
 

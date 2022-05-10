@@ -15,7 +15,7 @@
         public const string Calendar_Confirm = "Calendar_Confirm";
         public const string Symptoms_Fever = "Symptoms_Fever";
 
-        public const string CreateAppointment = "1CRTAPPTMNT";
+        public const string CreateAnnouncement = "1CRTAPPTMNT";
         public const string GetAppointment = "2GTAPPTMNT";
 
         public const string Cancel = "@cancel";

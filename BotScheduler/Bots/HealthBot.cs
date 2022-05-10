@@ -22,12 +22,10 @@ namespace BotScheduler
         private readonly IStatePropertyAccessor<DateTime> _lastAccessedTimeProperty;
         private readonly IStatePropertyAccessor<DialogState> _dialogStateProperty;
         private readonly IConfiguration _configuration;
-        private readonly RepositoryService repositoryService;
         private int _expireAfterSeconds;
 
-        public HealthBot(MainDialog mainDialog, UserState userState, ConversationState conversationState, IConfiguration configuration, RepositoryService repositoryService)
+        public HealthBot(MainDialog mainDialog, UserState userState, ConversationState conversationState, IConfiguration configuration)
         {
-            this.repositoryService = repositoryService;
             _configuration = configuration;
             _conversationState = conversationState;
             _userState = userState;
@@ -45,16 +43,12 @@ namespace BotScheduler
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
                     await DialogGo.ToSendWelcomeActivity(turnContext, cancellationToken);
-
-                    await repositoryService.ChatAddAsync(turnContext);
                 }
             }
         }
 
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
         {
-            await repositoryService.MessageAddAsync(turnContext.Activity.Text, "Patient", turnContext);
-
             var lastAccess = await _lastAccessedTimeProperty.GetAsync(turnContext, () => DateTime.UtcNow, cancellationToken).ConfigureAwait(false);
             if ((DateTime.UtcNow - lastAccess) >= TimeSpan.FromSeconds(_expireAfterSeconds))
             {
@@ -75,7 +69,6 @@ namespace BotScheduler
             //receiver messages main. run the main dialog
             turnContext.Activity.Value = DialogIds.Initial;
             await _mainDialog.RunAsync(turnContext, _conversationState.CreateProperty<DialogState>(DialogIds.DialogState), cancellationToken);
-
 
             var conversationStateAccessors = _conversationState.CreateProperty<ConversationData>(nameof(ConversationData));
             var conversationData = await conversationStateAccessors.GetAsync(turnContext, () => new ConversationData());
