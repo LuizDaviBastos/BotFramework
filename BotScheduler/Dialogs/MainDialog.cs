@@ -3,7 +3,9 @@ using BotScheduler.Library.Keys;
 using BotScheduler.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,6 +36,7 @@ namespace BotScheduler.Dialogs
 
             AddDialog(new WaterfallDialog(DialogIds.MainWaterfallDialog, waterfallSteps));
             AddDialog(new TextPrompt(DialogIds.TextPrompt));
+            AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
 
             InitialDialogId = DialogIds.MainWaterfallDialog;
         }
@@ -62,10 +65,18 @@ namespace BotScheduler.Dialogs
             waterfallStep.Values["Age"] = waterfallStep.Result;
             var reponse = waterfallStep.Context.Activity.Text;
 
-            return await waterfallStep.PromptAsync(DialogIds.TextPrompt, new PromptOptions()
+            var choiceList = new List<Choice>()
             {
-                Prompt = MessageFactory.Text($"Your name is {waterfallStep.Values["Name"]} and your Age is {waterfallStep.Result}.\n Run Again?")
-            }, cancellationToken);
+                new Choice("Sim"),
+                new Choice("Não"),
+            };
+
+            return await waterfallStep.PromptAsync(nameof(ChoicePrompt), new PromptOptions()
+            {
+                Prompt = MessageFactory.Text($"Your name is {waterfallStep.Values["Name"]} and your Age is {waterfallStep.Result}.\n Run Again?"),
+                Choices = choiceList,
+                Style = ListStyle.Auto
+            });
         }
 
 
@@ -73,7 +84,6 @@ namespace BotScheduler.Dialogs
         {
             var result = waterfallStep.Result;
             var reponse = waterfallStep.Context.Activity.Text;
-
 
             if (reponse == "sim")
             {
