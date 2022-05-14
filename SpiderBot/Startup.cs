@@ -39,7 +39,7 @@ namespace BotScheduler
             services.AddSingleton<IStorage, MemoryStorage>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, HealthBot>();
+            services.AddTransient<IBot, SpiderBot>();
 
             services.AddScoped<MemoryStorage>();
 

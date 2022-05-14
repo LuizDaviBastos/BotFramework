@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace BotScheduler
 {
 
-    public class HealthBot : ActivityHandler
+    public class SpiderBot : ActivityHandler
     {
         private readonly MainDialog _mainDialog;
         private readonly UserState _userState;
@@ -24,7 +24,7 @@ namespace BotScheduler
         private readonly IConfiguration _configuration;
         private int _expireAfterSeconds;
 
-        public HealthBot(MainDialog mainDialog, UserState userState, ConversationState conversationState, IConfiguration configuration)
+        public SpiderBot(MainDialog mainDialog, UserState userState, ConversationState conversationState, IConfiguration configuration)
         {
             _configuration = configuration;
             _conversationState = conversationState;
