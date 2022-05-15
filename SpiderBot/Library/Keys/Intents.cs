@@ -1,7 +1,12 @@
-﻿namespace BotScheduler.Library.Keys
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BotScheduler.Library.Keys
 {
-    public struct Intents
+    public class Intents
     {
+
         public const string UtilitiesConfirm = "Utilities_Confirm";
         public const string UtilitiesReject = "Utilities_Reject";
         public const string ConnectToMeeting = "Calendar_ConnectToMeeting";
@@ -19,5 +24,32 @@
         public const string GetAppointment = "2GTAPPTMNT";
 
         public const string Cancel = "@cancel";
+
+        public class AnnouncementIntents
+        {
+            public const string NewAnnouncement = "Criar anuncio 📝";
+            public const string ListAnnouncement = "Listar anuncios 🧾";
+            public const string EditAnnouncement = "Excluir anuncio 🗑";
+            public const string DeleteAnnouncement = "Editar anuncio ✏";
+
+            public static List<string> GetIntents() 
+            {
+                var s = new List<string>
+                {
+                    AnnouncementIntents.NewAnnouncement,
+                    AnnouncementIntents.ListAnnouncement,
+                    AnnouncementIntents.EditAnnouncement,
+                    AnnouncementIntents.DeleteAnnouncement,
+                    AnnouncementIntents.EditAnnouncement,
+                    AnnouncementIntents.DeleteAnnouncement,
+                    AnnouncementIntents.EditAnnouncement,
+                    AnnouncementIntents.DeleteAnnouncement,
+                    AnnouncementIntents.EditAnnouncement,
+                    AnnouncementIntents.DeleteAnnouncement
+                };
+                return s;
+            }
+
+        }
     }
 }

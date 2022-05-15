@@ -2,7 +2,9 @@
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,7 +59,7 @@ namespace BotScheduler.Dialogs.GoToDialog
 
         private static Attachment GetWelcomeCard()
         {
-            var listActions = new List<CardAction>()
+            /*var listActions = new List<CardAction>()
             {
                 new CardAction(){ Title = "Create a Announcement", Type = ActionTypes.PostBack,  Value = Intents.CreateAnnouncement},
             };
@@ -68,8 +70,20 @@ namespace BotScheduler.Dialogs.GoToDialog
                 Text = "Your options:",
                 Buttons = listActions
             };
-
             return card.ToAttachment();
+             */
+
+            string[] paths = { ".", "AdaptiveCards", "adaptativecard.json" };
+            var adaptiveCardJson = File.ReadAllText(Path.Combine(paths));
+
+            var attachment = new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCardJson),
+            };
+            return attachment;
+
+            
         }
     }
 }

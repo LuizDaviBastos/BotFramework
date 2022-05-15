@@ -9,6 +9,7 @@
         public static string CreateAppointmentDialog { get => nameof(CreateAppointmentDialog); }
         public static string GetAppointmentDialog { get => nameof(GetAppointmentDialog); }
         public static string TextPrompt { get => nameof(TextPrompt); }
+        public static string NumberPrompt { get => nameof(NumberPrompt); }
         public static string DeviceIntegrationDialog { get => nameof(DeviceIntegrationDialog); }
         public static string FeverDialog { get => nameof(FeverDialog); }
         public static object Initial { get => nameof(Initial); }

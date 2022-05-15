@@ -12,6 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Driver;
+using SpiderBot.Data.Entities;
+using SpiderBot.Data.Interfaces;
+using SpiderBot.Data.Repositories;
 
 namespace BotScheduler
 {
@@ -37,6 +41,10 @@ namespace BotScheduler
             services.AddSingleton<UserState>();
             services.AddSingleton<ConversationState>();
             services.AddSingleton<IStorage, MemoryStorage>();
+
+            services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+            services.AddScoped<ITitleRepository, TitleRepository>();
+            //services.AddScoped(x => new MongoClient(""));
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, SpiderBot>();

@@ -15,27 +15,30 @@ namespace SpiderBot.Data.Repositories
             collection = db.GetCollection<TEntity>(nameof(TEntity));
         }
 
-        public async Task Delete(string id)
+        public Repository() { }
+
+
+        public virtual async Task Delete(string id)
         {
             await collection.DeleteOneAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<TEntity>> Get()
+        public virtual async Task<IEnumerable<TEntity>> Get()
         {
             return (await collection.FindAsync(x => true)).ToList();
         }
 
-        public async Task<TEntity> Get(string id)
+        public virtual async Task<TEntity> Get(string id)
         {
             return (await collection.FindAsync(x => x.Id == id)).FirstOrDefault();
         }
 
-        public async Task Insert(TEntity entity)
+        public virtual async Task Insert(TEntity entity)
         {
             await collection.InsertOneAsync(entity);
         }
 
-        public async Task Update(string id, TEntity entity)
+        public virtual async Task Update(string id, TEntity entity)
         {
             await collection.ReplaceOneAsync(x => x.Id == id, entity);
         }

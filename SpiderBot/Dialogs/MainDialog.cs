@@ -1,10 +1,12 @@
 ﻿using BotScheduler.API;
+using BotScheduler.Dialogs.GoToDialog;
 using BotScheduler.Library.Keys;
 using BotScheduler.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Extensions.Configuration;
+using SpiderBot.Data.Interfaces;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,20 +17,24 @@ namespace BotScheduler.Dialogs
     {
         private readonly IStatePropertyAccessor<Appointment> _statePropertyAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IAnnouncementRepository announcementRepository;
+        private readonly ITitleRepository titleRepository;
         private readonly MemoryStorage _memoryStorage;
 
         public MainDialog(UserState userState,
-            MemoryStorage memoryStorage, IConfiguration configuration) : base(nameof(MainDialog))
+            MemoryStorage memoryStorage, IConfiguration configuration, IAnnouncementRepository announcementRepository, ITitleRepository titleRepository) : base(nameof(MainDialog))
         {
             this._configuration = configuration;
             _memoryStorage = memoryStorage;
             _statePropertyAccessor = userState.CreateProperty<Appointment>(nameof(Appointment));
+            this.announcementRepository = announcementRepository;
+            this.titleRepository = titleRepository;
 
             var waterfallSteps = new WaterfallStep[]
             {
                 //dialogs...
-                QuestionName,
-                QuestionAge,
+                InitialQuestion,
+                VerifyIntent,
                 QuestionRunAgain,
                 RunAgain
 
@@ -36,27 +42,42 @@ namespace BotScheduler.Dialogs
 
             AddDialog(new WaterfallDialog(DialogIds.MainWaterfallDialog, waterfallSteps));
             AddDialog(new TextPrompt(DialogIds.TextPrompt));
+            AddDialog(new NewAnnouncementDialog(announcementRepository, titleRepository));
             AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
 
             InitialDialogId = DialogIds.MainWaterfallDialog;
         }
 
 
-        public async Task<DialogTurnResult> QuestionName(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> InitialQuestion(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
-            return await waterfallStep.PromptAsync(DialogIds.TextPrompt, new PromptOptions()
+            var choiceList = new List<Choice>();
+
+            Intents.AnnouncementIntents.GetIntents().ForEach(option => choiceList.Add(new Choice(option)));
+
+            return await waterfallStep.PromptAsync(nameof(ChoicePrompt), new PromptOptions()
             {
-                Prompt = MessageFactory.Text($"What's your name?")
-            }, cancellationToken);
+                Prompt = MessageFactory.Text($"Escolha uma opção"),
+                Choices = choiceList,
+                Style = ListStyle.SuggestedAction
+            });
         }
 
-        public async Task<DialogTurnResult> QuestionAge(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
+        public async Task<DialogTurnResult> VerifyIntent(WaterfallStepContext waterfallStep, CancellationToken cancellationToken)
         {
-            waterfallStep.Values["Name"] = waterfallStep.Result;
-            return await waterfallStep.PromptAsync(DialogIds.TextPrompt, new PromptOptions()
+            switch (waterfallStep.Context.Activity.Text)
             {
-                Prompt = MessageFactory.Text($"Now tour age:")
-            }, cancellationToken);
+                case Intents.AnnouncementIntents.NewAnnouncement:
+                    return await waterfallStep.ReplaceDialogAsync(nameof(NewAnnouncementDialog), null, cancellationToken);
+                case Intents.AnnouncementIntents.ListAnnouncement:
+                    return await DialogGo.ToDontUnderstand(waterfallStep, cancellationToken);
+                case Intents.AnnouncementIntents.EditAnnouncement:
+                    return await DialogGo.ToDontUnderstand(waterfallStep, cancellationToken);
+                case Intents.AnnouncementIntents.DeleteAnnouncement:
+                    return await DialogGo.ToDontUnderstand(waterfallStep, cancellationToken);
+                default:
+                    return await DialogGo.ToDontUnderstand(waterfallStep, cancellationToken);
+            }
         }
 
 
